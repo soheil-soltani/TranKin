@@ -1,0 +1,107 @@
+%TranKin is an open source software for calculation of the regularized solution 
+%	to inverse problems consisting of 1-D convolution equations.
+%This module has been written in MATLAB. 
+%Author: Soheil Soltani
+%Developed at: Chemical and Biological Engineering Dept.,                
+%	Chalmers University of Technology, Göteborg, Sweden.                    
+%Release: 1.0.2.0                                                          
+%Date released:                                                          
+%                                                                         
+%Copyright © 2014 Free Software Foundation, Inc.
+%Permission is granted to copy, distribute and/or modify this document 
+%   under the terms of the GNU Free Documentation License, Version 1.3 or
+%       any later version published by the Free Software Foundation; 
+%           with no Invariant Sections, with no Front-Cover Texts, and 
+%               with no Back-Cover Texts.
+
+clear
+pack
+clc
+
+%1-Initialization
+F_input_msg = ['Please enter the name and extension (e.g. data.txt)\n'...
+    'of the .txt file containing the variables t, y, g, respectively: '];
+file_name = input(F_input_msg, 's');
+fileID = fopen(file_name,'r');
+data = fscanf(fileID, '%g', [3 Inf]);
+data = data';
+
+t = data(:,1);      %Time series at which data has been acquired
+y = data(:,2);      %Specifies the right-hand side
+g = data(:,3);      %Specifies the kernel
+
+l = length(t);
+
+%2-Singular Value Decomposition
+K = tril(toeplitz(g));    %Reforming the kernel into a convolution operator
+[G,Sigma,T] = svd(K);
+Sigma = diag(Sigma);
+
+%3-Error
+%delta and tau are experimental uncertainties in specifying the 
+%   right-hand side and the kernel, respectively.
+delta_msg = ['Please enter the error in specifying the righ-hand side.'...
+    ' delta = '];
+delta = input(delta_msg);
+
+tau_msg = ['Please enter the error in specifying the kernel. tau = '];
+tau = input(tau_msg);
+
+%4-Regularization parameter
+alpha_input_msg = ['Please enter the regularization parameter (from the '...
+    'interval [0, 1]) or press <Enter> to let the '...
+    'software \ncalculate it: '];
+getkey = input(alpha_input_msg);
+if getkey ~= 13
+	if (getkey<=1 && getkey >=0)
+        fprintf('alpha has been entered successfully.')
+        alpha = getkey;
+	else
+		errormsg = ['Incorrect input. Note that 0 <= alpha <= 1. '...
+		'Please restart the program.'];
+        error(errormsg)
+	end
+else
+	inputmsg = ['Please enter the initial guess for the Newton '...
+        'root-finding routine (from the interval [0, 1]) or press '...
+        '<Enter> to \nlet the software calculate it: '];
+	getkey = input(inputmsg);
+	if getkey ~= 13
+		if (getkey<=1 && getkey >=0)
+			fprintf('The initial guess has been entered successfully.')
+        	alpha_0 = getkey;
+		else
+			errormsg = ['Incorrect input. Note that 0 <= alpha <= 1. '...
+                'Please restart the program.'];
+			error(errormsg)
+		end
+	else
+		alpha_0 = initial_guess(K, y, delta, tau);
+	end
+    [alpha,A,B,index] = frootf(alpha_0, G, Sigma, T, y, t, delta, tau, K);
+end
+
+%5-Computing the regularized solution
+solution = T*((Sigma./(Sigma.^2 + alpha)).*(G'*y));
+
+%6-Post-processing
+fprintf(2,'\nPlot the results?[Y/N]... ');
+plot_confirm = input('','s');
+if plot_confirm == 'Y'
+    figure(1)
+    plot(t,solution)
+    title('Regularized solution', 'FontSize', 12)
+    xlabel('Time, [arb. u.]','FontSize',12)
+    ylabel('[arb. u.]','FontSize',12)
+    
+    figure(2)
+    subplot(2,1,1)
+    plot(index,A)
+    title('Convergence monitor','FontSize',12)
+    xlabel('Iteration','FontSize',12)
+    ylabel('\alpha','FontSize',12)
+    subplot(2,1,2)
+    plot(index,B,'r')
+    xlabel('Iteration','FontSize',12)
+    ylabel('\rho_\eta(\alpha)','FontSize',12)
+end
