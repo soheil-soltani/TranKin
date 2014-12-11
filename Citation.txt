@@ -1,0 +1,17 @@
+Dear user:
+
+
+This software package is a result of a research work and is based on the 
+following peer-reviewed articles. If any part of this collection including the 
+software and its documentation has been useful in your research, kindly consider
+citing the relevant item(s):
+
+1- Soltani, S., Wang-Hansen, C., Andersson, R., Andersson, B.: CFD 
+	characterization of monolithic reactors for kinetic studies. Canadian 
+	Journal of Chemical Engineering, DOI 10.1002/cjce.22022, 92(9), 1570 (2014).
+2- Soltani, S., Andersson, R., Andersson, B., Time resolution in transient 
+	kinetics, in: Beilina, L. (Ed.) Inverse Problems and Applications, Springer,
+	ISBN 978-3-319-12498-8 (2015).
+3- Soltani, S., Andersson, R., Andersson, B.: Enhancement of time resolution in
+	transient kinetics. Chemical Engineering Journal. 
+	DOI 10.1016/j.cej.2014.10.098, 264, 188-196 (2014).	
