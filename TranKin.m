@@ -55,6 +55,7 @@ tau = input(tau_msg);
 
 %4-Regularization parameter
 alpha_input_msg = ['Please enter the regularization parameter (from the '...
+<<<<<<< HEAD
     'interval (0, Inf) ) or press <Enter> to let the '...
     'software \ncalculate it: '];
 getkey = input(alpha_input_msg);
@@ -66,10 +67,23 @@ if getkey ~= 13			%There is no iterative procedure in this case.
 						%is relevant to the iterative routine only.
 	else
 		errormsg = ['Incorrect input. Note that alpha > 0. '...
+=======
+    'interval [0, 1]) or press <Enter> to let the '...
+    'software \ncalculate it: '];
+getkey = input(alpha_input_msg);
+if getkey ~= 13
+	if (getkey<=1 && getkey >=0)
+        fprintf('alpha has been entered successfully.')
+        alpha = getkey;
+        plot_flag = 0;
+	else
+		errormsg = ['Incorrect input. Note that 0 <= alpha <= 1. '...
+>>>>>>> 8511919221c1626f57397653a545631699bc8cba
 		'Please restart the program.'];
         error(errormsg)
 	end
 else
+<<<<<<< HEAD
     plot_flag = 1; 		%This ensures plotting the convergence history of the 
 						%following iterative routine.
 	inputmsg = ['Please enter the initial guess for the Newton '...
@@ -86,6 +100,23 @@ else
 			error(errormsg)
 		end
     else
+=======
+    plot_flag = 1;
+	inputmsg = ['Please enter the initial guess for the Newton '...
+        'root-finding routine (from the interval [0, 1]) or press '...
+        '<Enter> to \nlet the software calculate it: '];
+	getkey = input(inputmsg);
+	if getkey ~= 13
+		if (getkey<=1 && getkey >=0)
+			fprintf('The initial guess has been entered successfully.')
+        	alpha_0 = getkey;
+		else
+			errormsg = ['Incorrect input. Note that 0 <= alpha <= 1. '...
+                'Please restart the program.'];
+			error(errormsg)
+		end
+	else
+>>>>>>> 8511919221c1626f57397653a545631699bc8cba
 		alpha_0 = initial_guess(K, y, delta, tau);
 	end
     [alpha,A,B,index] = frootf(alpha_0, G, Sigma, T, y, t, delta, tau, K);
