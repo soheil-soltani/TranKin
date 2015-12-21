@@ -25,7 +25,11 @@ pack
 clc
 
 %1-Initialization
+<<<<<<< HEAD
 F_input_msg = ['\nPlease enter the name and extension (e.g. data.txt)\n'...
+=======
+F_input_msg = ['Please enter the name and extension (e.g. data.txt)\n'...
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
     'of the .txt file containing the variables t, y, g, respectively: '];
 file_name = input(F_input_msg, 's');
 fileID = fopen(file_name,'r');
@@ -37,7 +41,11 @@ y = data(:,2);      %Specifies the right-hand side
 g = data(:,3);      %Specifies the kernel
 
 l = length(t);
+<<<<<<< HEAD
 % 
+=======
+
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
 %2-Singular Value Decomposition
 K = tril(toeplitz(g));    %Reforming the kernel into a convolution operator
 [G,Sigma,T] = svd(K);
@@ -46,6 +54,7 @@ Sigma = diag(Sigma);
 %3-Error
 %delta and tau are experimental uncertainties in specifying the 
 %   right-hand side and the kernel, respectively.
+<<<<<<< HEAD
 delta_msg = ['\nPlease enter the error in specifying the righ-hand '...
     'side. delta = '];
 delta = input(delta_msg);
@@ -73,6 +82,24 @@ if (isempty(user_inp_alpha) == false)
 	if (user_inp_alpha > 0)
         fprintf('\nalpha has been entered successfully.')
         alpha = user_inp_alpha;
+=======
+delta_msg = ['Please enter the error in specifying the righ-hand side.'...
+    ' delta = '];
+delta = input(delta_msg);
+
+tau_msg = ['Please enter the error in specifying the kernel. tau = '];
+tau = input(tau_msg);
+
+%4-Regularization parameter
+alpha_input_msg = ['Please enter the regularization parameter (from the '...
+    'interval (0, Inf) ) or press <Enter> to let the '...
+    'software \ncalculate it: '];
+getkey = input(alpha_input_msg);
+if getkey ~= 13			%There is no iterative procedure in this case.
+	if (getkey > 0)
+        fprintf('alpha has been entered successfully.')
+        alpha = getkey;
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
         plot_flag = 0;	%This prevents plotting the convergence history, 
                         %which is relevant to the iterative routine only.
 	else
@@ -83,6 +110,7 @@ if (isempty(user_inp_alpha) == false)
 else
     plot_flag = 1; 		%This ensures plotting the convergence history of 
                         %the following iterative routine.
+<<<<<<< HEAD
                         
 %4-a Choosing the iterative root-finding scheme: Newton vs. Bisection                        
     method = input(['\nPlease choose the root-finding scheme: '...
@@ -133,13 +161,36 @@ else
     else
         error('Incorrect choice. Please restart the program.');
     end
+=======
+	inputmsg = ['Please enter the initial guess for the Newton '...
+        'root-finding routine (from the interval (0, Inf) ) or press '...
+        '<Enter> to \nlet the software calculate it: '];
+	getkey = input(inputmsg);
+	if getkey ~= 13
+		if (getkey > 0)
+			fprintf('The initial guess has been entered successfully.')
+        	alpha_0 = getkey;
+		else
+			errormsg = ['Incorrect input. Note that alpha > 0. '...
+                'Please restart the program.'];
+			error(errormsg)
+		end
+    else
+		alpha_0 = initial_guess(K, y, delta, tau);
+	end
+    [alpha,A,B,index] = frootf(alpha_0, G, Sigma, T, y, t, delta, tau, K);
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
 end
 
 %5-Computing the regularized solution
 solution = T*((Sigma./(Sigma.^2 + alpha)).*(G'*y));
 
 %6-Post-processing
+<<<<<<< HEAD
 fprintf('\nPlot the results?[Y/N]... ');
+=======
+fprintf(2,'\nPlot the results?[Y/N]... ');
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
 plot_confirm = input('','s');
 if plot_confirm == 'Y'
     figure(1)
@@ -152,15 +203,24 @@ if plot_confirm == 'Y'
         figure(2)
         subplot(2,1,1)
         plot(index,A)
+<<<<<<< HEAD
         if (method == 'N')
             title('Convergence monitor (Newton method)','FontSize',12)
         else
             title('Convergence monitor (Bisection method)','FontSize',12)
         end
+=======
+        title('Convergence monitor','FontSize',12)
+        xlabel('Iteration','FontSize',12)
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
         ylabel('\alpha','FontSize',12)
         subplot(2,1,2)
         plot(index,B,'r')
         xlabel('Iteration','FontSize',12)
+<<<<<<< HEAD
         ylabel('\rho_\eta(\alpha)','FontSize',12)        
+=======
+        ylabel('\rho_\eta(\alpha)','FontSize',12)
+>>>>>>> 37411c16ab68b52ea1b64f09192ec4d8d43284ab
     end
 end
